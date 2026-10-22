@@ -46,7 +46,10 @@ therefore uses nothing but five plain `GroundOverlay` elements:
   rather than being punched out by nodata.
 - **Shoreline:** GSHHG v2.3.7 full-resolution. L2 lake polygons, with all L3
   islands removed and L4 ponds restored as water.
-- **Colour ramp:** pale cyan at 0 m to navy at 410 m, drawn at 82% opacity.
+- **Colour ramp:** dark blue at 0 m, through cyan, teal, green, yellow and
+  orange, to dark red at 410 m, drawn at 86% opacity. It is one shared scale for
+  all five lakes, so colour means the same depth everywhere: Erie (62 m maximum)
+  never leaves the blue-green range, while Superior reaches dark red at 405 m.
 - **Ownership:** where two LLD grids overlap on water, the pixel is given to one
   grid only, so overlapping overlays never stack alpha into a dark seam. Only
   three overlaps exist and each is assigned to the authoritative survey:
@@ -64,11 +67,11 @@ therefore uses nothing but five plain `GroundOverlay` elements:
 
 | Lake | Image | Max depth found | PNG |
 | --- | --- | --- | --- |
-| Superior | 4096 x 2583 | 404.6 m | 1.8 MB |
-| Michigan | 2328 x 4096 | 275.8 m | 1.1 MB |
-| Huron | 4033 x 4096 | 224.1 m | 1.9 MB |
+| Superior | 4096 x 2583 | 404.6 m | 2.1 MB |
+| Michigan | 2328 x 4096 | 275.8 m | 1.2 MB |
+| Huron | 4033 x 4096 | 224.1 m | 2.1 MB |
 | Erie | 4096 x 1825 | 62.5 m | 0.2 MB |
-| Ontario | 4096 x 1609 | 243.8 m | 0.7 MB |
+| Ontario | 4096 x 1609 | 243.8 m | 0.8 MB |
 
 Every maximum matches the published NOAA figure for the lake. Checks against the
 full-resolution GSHHG mask:

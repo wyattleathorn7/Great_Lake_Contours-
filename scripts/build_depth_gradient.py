@@ -65,16 +65,25 @@ LABEL = {
 OWNER = ["superior", "michigan", "ontario", "huron", "erie"]
 
 LONG_SIDE = 4096
-OVERLAY_ALPHA = 210
+OVERLAY_ALPHA = 220
 DEPTH_MIN, DEPTH_MAX = 0.0, 410.0
 
+# One scale for every lake: dark blue = 0 m (shore), dark red = 410 m (the
+# deepest point in the basin). A shallow lake simply never reaches the warm end,
+# so Erie (62 m) stops at green while Superior runs through orange to red.
 BATHY_STOPS = [
-    (0.00, (205, 236, 246)),
-    (0.18, (150, 214, 246)),
-    (0.38, (72, 166, 238)),
-    (0.58, (30, 104, 214)),
-    (0.78, (14, 56, 152)),
-    (1.00, (8, 24, 88)),
+    (0.00, (10, 25, 85)),      # darkest navy - shoreline
+    (0.06, (14, 45, 130)),
+    (0.13, (20, 80, 180)),
+    (0.21, (26, 125, 208)),
+    (0.30, (30, 168, 208)),    # cyan-blue
+    (0.40, (45, 192, 172)),    # teal
+    (0.50, (75, 196, 110)),    # green
+    (0.60, (145, 201, 65)),    # yellow-green
+    (0.70, (218, 196, 45)),    # yellow
+    (0.80, (232, 140, 28)),    # orange
+    (0.90, (203, 58, 24)),     # red-orange
+    (1.00, (128, 5, 10)),      # dark red - deepest
 ]
 
 SEEDS = [
@@ -350,7 +359,11 @@ def description_html(with_images):
         '<h2>Great Lakes Depth Gradient</h2>'
         '<p>Bathymetry rendered as a continuous colour gradient. All land and '
         'every island are cut out, so the overlay shows water only.</p>'
-        '<p><b>Depth (metres):</b><br>' + " &nbsp; ".join(sw) + '</p>'
+        '<p><b>Depth (metres) - dark blue is shallow, dark red is deep:</b><br>'
+        + " &nbsp; ".join(sw) + '</p>'
+        '<p>One shared scale for all five lakes, so colour means the same depth '
+        'everywhere: Erie (62 m maximum) never leaves the blue-green range, '
+        'while Superior reaches dark red at 405 m.</p>'
         + img +
         '<p><b>Sources:</b> NOAA Great Lakes LLD bathymetric grids '
         '(3 arc-second) and GSHHG v2.3.7 full-resolution shoreline '
@@ -375,7 +388,7 @@ def _font(size, bold=False):
 
 
 def make_legend(path):
-    W, H = 420, 170
+    W, H = 420, 186
     img = Image.new("RGBA", (W, H), (255, 255, 255, 235))
     d = ImageDraw.Draw(img)
     d.text((14, 12), "Great Lakes Depth Gradient", font=_font(20, True),
@@ -394,9 +407,11 @@ def make_legend(path):
         d.line([(x, y1), (x, y1 + 6)], fill=(40, 50, 70, 255))
         tw = d.textlength(str(v), font=fs)
         d.text((x - tw / 2, y1 + 8), str(v), font=fs, fill=(40, 50, 70, 255))
-    d.text((16, 132), "NOAA LLD 3-arcsec bathymetry + GSHHG full-res shoreline",
+    d.text((16, 132), "Dark blue = shallow, dark red = deep (0-410 m, all lakes)",
            font=fs, fill=(60, 70, 90, 255))
-    d.text((16, 148), "Land and every island cut out (transparent).",
+    d.text((16, 148), "NOAA LLD 3-arcsec bathymetry + GSHHG full-res shoreline",
+           font=fs, fill=(60, 70, 90, 255))
+    d.text((16, 164), "Land and every island cut out (transparent).",
            font=fs, fill=(60, 70, 90, 255))
     img.save(path)
 
