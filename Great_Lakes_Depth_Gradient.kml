@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<name>Great Lakes Depth Gradient</name>
+<description><![CDATA[<h2>Great Lakes Depth Gradient</h2><p>Bathymetry rendered as a continuous colour gradient. All land and every island are cut out, so the overlay shows water only.</p><p><b>Depth (metres):</b><br><span style="display:inline-block;width:14px;height:14px;background:rgb(205,236,246);border:1px solid #888;vertical-align:middle"></span> 0 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(167,221,246);border:1px solid #888;vertical-align:middle"></span> 50 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(125,198,243);border:1px solid #888;vertical-align:middle"></span> 100 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(77,169,238);border:1px solid #888;vertical-align:middle"></span> 150 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(49,133,225);border:1px solid #888;vertical-align:middle"></span> 200 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(27,97,205);border:1px solid #888;vertical-align:middle"></span> 250 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(17,67,166);border:1px solid #888;vertical-align:middle"></span> 300 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(11,45,130);border:1px solid #888;vertical-align:middle"></span> 350 m &nbsp; <span style="display:inline-block;width:14px;height:14px;background:rgb(8,27,94);border:1px solid #888;vertical-align:middle"></span> 400 m</p><p><img src="https://wyattleathorn7.github.io/Great_Lake_Contours-/depth_gradient/legend.png" width="420"></p><p><b>Sources:</b> NOAA Great Lakes LLD bathymetric grids (3 arc-second) and GSHHG v2.3.7 full-resolution shoreline (lakes L2, islands L3, ponds L4).</p><p>Five overlays, one per lake, each at up to 4096 px on the long side. Built from plain image overlays only, so it loads in both Google Earth Web and Google Earth Pro.</p>]]></description>
+<Style><ListStyle><listItemType>check</listItemType></ListStyle></Style>
+<GroundOverlay>
+<name>Depth - Lake Superior</name>
+<description>NOAA LLD 3-arcsecond bathymetry as a continuous depth gradient. Land, islands and ponds cut out (transparent).</description>
+<visibility>1</visibility>
+<drawOrder>40</drawOrder>
+<Icon>
+<href>https://wyattleathorn7.github.io/Great_Lake_Contours-/depth_gradient/depth_superior.png</href>
+</Icon>
+<LatLonBox>
+<north>49.500417</north><south>45.999583</south><east>-83.999583</east><west>-92.200417</west>
+</LatLonBox>
+</GroundOverlay>
+<GroundOverlay>
+<name>Depth - Lake Michigan</name>
+<description>NOAA LLD 3-arcsecond bathymetry as a continuous depth gradient. Land, islands and ponds cut out (transparent).</description>
+<visibility>1</visibility>
+<drawOrder>40</drawOrder>
+<Icon>
+<href>https://wyattleathorn7.github.io/Great_Lake_Contours-/depth_gradient/depth_michigan.png</href>
+</Icon>
+<LatLonBox>
+<north>46.090417</north><south>41.619583</south><east>-84.499583</east><west>-88.000417</west>
+</LatLonBox>
+</GroundOverlay>
+<GroundOverlay>
+<name>Depth - Lake Huron</name>
+<description>NOAA LLD 3-arcsecond bathymetry as a continuous depth gradient. Land, islands and ponds cut out (transparent).</description>
+<visibility>1</visibility>
+<drawOrder>40</drawOrder>
+<Icon>
+<href>https://wyattleathorn7.github.io/Great_Lake_Contours-/depth_gradient/depth_huron.png</href>
+</Icon>
+<LatLonBox>
+<north>46.500417</north><south>42.999583</south><east>-79.679583</east><west>-84.500417</west>
+</LatLonBox>
+</GroundOverlay>
+<GroundOverlay>
+<name>Depth - Lake Erie</name>
+<description>NOAA LLD 3-arcsecond bathymetry as a continuous depth gradient. Land, islands and ponds cut out (transparent).</description>
+<visibility>1</visibility>
+<drawOrder>40</drawOrder>
+<Icon>
+<href>https://wyattleathorn7.github.io/Great_Lake_Contours-/depth_gradient/depth_erie.png</href>
+</Icon>
+<LatLonBox>
+<north>43.000417</north><south>40.999583</south><east>-77.999583</east><west>-84.000417</west>
+</LatLonBox>
+</GroundOverlay>
+<GroundOverlay>
+<name>Depth - Lake Ontario</name>
+<description>NOAA LLD 3-arcsecond bathymetry as a continuous depth gradient. Land, islands and ponds cut out (transparent).</description>
+<visibility>1</visibility>
+<drawOrder>40</drawOrder>
+<Icon>
+<href>https://wyattleathorn7.github.io/Great_Lake_Contours-/depth_gradient/depth_ontario.png</href>
+</Icon>
+<LatLonBox>
+<north>44.250417</north><south>43.149583</south><east>-76.049583</east><west>-79.900417</west>
+</LatLonBox>
+</GroundOverlay>
+</Document>
+</kml>
