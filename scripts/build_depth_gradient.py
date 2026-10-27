@@ -22,6 +22,7 @@ Outputs (repo root):
 import os
 import shutil
 import sys
+import xml.etree.ElementTree as ET
 import zipfile
 
 import numpy as np
@@ -72,18 +73,23 @@ DEPTH_MIN, DEPTH_MAX = 0.0, 410.0
 # deepest point in the basin). A shallow lake simply never reaches the warm end,
 # so Erie (62 m) stops at green while Superior runs through orange to red.
 BATHY_STOPS = [
-    (0.00, (10, 25, 85)),      # darkest navy - shoreline
-    (0.06, (14, 45, 130)),
-    (0.13, (20, 80, 180)),
-    (0.21, (26, 125, 208)),
-    (0.30, (30, 168, 208)),    # cyan-blue
-    (0.40, (45, 192, 172)),    # teal
-    (0.50, (75, 196, 110)),    # green
-    (0.60, (145, 201, 65)),    # yellow-green
-    (0.70, (218, 196, 45)),    # yellow
-    (0.80, (232, 140, 28)),    # orange
-    (0.90, (203, 58, 24)),     # red-orange
-    (1.00, (128, 5, 10)),      # dark red - deepest
+    (0.00, (10, 22, 72)),      # darkest navy - shoreline
+    (0.03, (14, 44, 122)),
+    (0.06, (19, 72, 168)),
+    (0.09, (24, 102, 196)),
+    (0.12, (29, 133, 208)),    # blue ends here: 0-49 m
+    (0.17, (34, 163, 206)),    # cyan
+    (0.24, (40, 187, 180)),    # teal
+    (0.32, (58, 198, 140)),    # sea green
+    (0.41, (95, 202, 88)),     # green
+    (0.50, (155, 203, 52)),    # yellow-green
+    (0.59, (208, 198, 38)),    # yellow
+    (0.67, (231, 172, 27)),    # amber
+    (0.74, (236, 128, 20)),    # orange
+    (0.81, (226, 78, 16)),     # orange-red
+    (0.89, (186, 30, 12)),     # red
+    (0.96, (143, 4, 9)),
+    (1.00, (104, 0, 7)),       # dark red - deepest
 ]
 
 SEEDS = [
@@ -420,6 +426,55 @@ def make_legend(path):
 EXTENTS = {}
 
 
+def _iter(root, tag):
+    return list(root.iter("{http://www.opengis.net/kml/2.2}" + tag))
+
+
+def _hrefs(root):
+    return [h.text for h in _iter(root, "href")]
+
+
+def _check_earth_web(root, where):
+    bad = [t for t in ("NetworkLink", "ScreenOverlay", "Region")
+           if _iter(root, t)]
+    if bad:
+        raise RuntimeError(f"{where}: Earth Web rejects {bad}")
+    n = len(_iter(root, "GroundOverlay"))
+    if n != len(LAKES):
+        raise RuntimeError(f"{where}: expected {len(LAKES)} overlays, got {n}")
+
+
+def verify_kml(path):
+    """No forbidden elements, and only absolute Pages URLs."""
+    root = ET.parse(path).getroot()
+    _check_earth_web(root, os.path.basename(path))
+    for h in _hrefs(root):
+        if not h.startswith(PAGES):
+            raise RuntimeError(f"{os.path.basename(path)}: href not absolute: {h}")
+    log(f"  verified {os.path.basename(path)}: {len(LAKES)} overlays, "
+        f"0 forbidden elements, all hrefs absolute")
+
+
+def verify_kmz(path):
+    """Every relative href must resolve inside the archive, as a real PNG."""
+    with zipfile.ZipFile(path) as z:
+        names = set(z.namelist())
+        root = ET.fromstring(z.read("doc.kml"))
+        _check_earth_web(root, os.path.basename(path))
+        hrefs = _hrefs(root)
+        if not hrefs:
+            raise RuntimeError("kmz: no image hrefs")
+        for h in hrefs:
+            if h.startswith("http"):
+                raise RuntimeError(f"kmz: href should be relative, got {h}")
+            if h not in names:
+                raise RuntimeError(f"kmz: href {h} is not in the archive")
+            if z.read(h)[:8] != b"\x89PNG\r\n\x1a\n":
+                raise RuntimeError(f"kmz: {h} is not a PNG")
+    log(f"  verified {os.path.basename(path)}: all {len(hrefs)} images resolve "
+        f"inside the archive")
+
+
 def main():
     os.makedirs(IMGDIR, exist_ok=True)
     log("== Great Lakes depth gradient (GitHub-hosted, Earth Web clean) ==")
@@ -436,23 +491,30 @@ def main():
     kml = os.path.join(ROOT, "Great_Lakes_Depth_Gradient.kml")
     with open(kml, "w") as f:
         f.write(kml_doc(PAGES, with_images=True))
+    verify_kml(kml)
     log(f"  {kml}  ({os.path.getsize(kml)/1e3:.1f} kB)")
 
     log("[4] offline KMZ (embedded images, relative paths)")
     kmz = os.path.join(ROOT, "Great_Lakes_Depth_Gradient.kmz")
     tmp = os.path.join(IMGDIR, "_kmz")
     shutil.rmtree(tmp, ignore_errors=True)
-    os.makedirs(tmp)
+    # The KMZ mirrors the repo layout, so doc.kml keeps the same
+    # "depth_gradient/<file>.png" hrefs as the hosted KML and resolves them
+    # against the archive instead of the web.
+    os.makedirs(os.path.join(tmp, "depth_gradient"))
     with open(os.path.join(tmp, "doc.kml"), "w") as f:
         f.write(kml_doc("", with_images=False))
-    for name in LAKES:
-        shutil.copy(os.path.join(IMGDIR, f"depth_{name}.png"),
-                    os.path.join(tmp, f"depth_{name}.png"))
-    shutil.copy(os.path.join(IMGDIR, "legend.png"), os.path.join(tmp, "legend.png"))
+    entries = ["doc.kml"]
+    for name in LAKES + ["legend"]:
+        src = f"depth_{name}.png" if name != "legend" else "legend.png"
+        arc = f"depth_gradient/{src}"
+        shutil.copy(os.path.join(IMGDIR, src), os.path.join(tmp, arc))
+        entries.append(arc)
     with zipfile.ZipFile(kmz, "w", zipfile.ZIP_DEFLATED) as z:
-        for n in ["doc.kml", "legend.png"] + [f"depth_{x}.png" for x in LAKES]:
-            z.write(os.path.join(tmp, n), n)
+        for rel in entries:
+            z.write(os.path.join(tmp, rel), rel)
     shutil.rmtree(tmp)
+    verify_kmz(kmz)
     log(f"  {kmz}  ({os.path.getsize(kmz)/1e6:.2f} MB)")
 
     log("done.")

@@ -15,7 +15,7 @@ instead of a flat blue blob.
 | File | Use |
 | --- | --- |
 | `Great_Lakes_Depth_Gradient.kml` | Entry file. Open this URL in Google Earth Web or Google Earth Pro. |
-| `Great_Lakes_Depth_Gradient.kmz` | Same layer with the images embedded, for offline use. |
+| `Great_Lakes_Depth_Gradient.kmz` | Same layer with the images embedded. The archive mirrors the repo layout, so `doc.kml` keeps the same relative hrefs. |
 | `depth_gradient/depth_<lake>.png` | The five per-lake overlays. |
 | `depth_gradient/legend.png` | Depth scale. |
 | `scripts/build_depth_gradient.py` | Rebuilds all of the above. |
@@ -49,7 +49,11 @@ therefore uses nothing but five plain `GroundOverlay` elements:
 - **Colour ramp:** dark blue at 0 m, through cyan, teal, green, yellow and
   orange, to dark red at 410 m, drawn at 86% opacity. It is one shared scale for
   all five lakes, so colour means the same depth everywhere: Erie (62 m maximum)
-  never leaves the blue-green range, while Superior reaches dark red at 405 m.
+  never leaves the blue-cyan range, while Superior reaches dark red at 405 m.
+  Blue is deliberately confined to 0-49 m so the warm half of the spectrum is
+  available to the depths that actually need it - 89% of the water area is
+  shallower than 200 m and 75% shallower than 150 m, so a blue-heavy ramp
+  wasted the visible range.
 - **Ownership:** where two LLD grids overlap on water, the pixel is given to one
   grid only, so overlapping overlays never stack alpha into a dark seam. Only
   three overlaps exist and each is assigned to the authoritative survey:
@@ -67,9 +71,9 @@ therefore uses nothing but five plain `GroundOverlay` elements:
 
 | Lake | Image | Max depth found | PNG |
 | --- | --- | --- | --- |
-| Superior | 4096 x 2583 | 404.6 m | 2.1 MB |
-| Michigan | 2328 x 4096 | 275.8 m | 1.2 MB |
-| Huron | 4033 x 4096 | 224.1 m | 2.1 MB |
+| Superior | 4096 x 2583 | 404.6 m | 2.2 MB |
+| Michigan | 2328 x 4096 | 275.8 m | 1.3 MB |
+| Huron | 4033 x 4096 | 224.1 m | 2.3 MB |
 | Erie | 4096 x 1825 | 62.5 m | 0.2 MB |
 | Ontario | 4096 x 1609 | 243.8 m | 0.8 MB |
 
